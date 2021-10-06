@@ -1,0 +1,70 @@
+#!/bin/bash
+# Text classification example with fastText.
+# 
+# To install FfastText, run:
+#     conda install -c conda-forge fasttext
+# 
+# The data was obtained via NeMo:
+#
+# https://github.com/NVIDIA/NeMo/blob/main/examples/nlp/text_classification/data/import_datasets.py
+# 
+# Simply enable the "_pretrained" functions in main to use pretrained vectors.
+
+set -eou pipefail
+
+readonly SEED=11215
+
+readonly PREDICTIONS=test.pred
+readonly VECTORS=wiki-news-300d-1M-subword.vec
+readonly DIM=50
+readonly LR=.1
+readonly EPOCHS=5
+
+download_pretrained() {
+    echo "Downloading pre-trained word vectors..."
+    curl -O https://dl.fbaipublicfiles.com/fasttext/vectors-english/wiki-news-300d-1M-subword.vec.zip
+    unzip -x wiki-news-300d-1M-subword.vec.zip
+    rm -f wiki-news-300d-1M-subword.vec.zip
+}
+
+prep() {
+    echo "Prepping data..."
+    for SPLIT in train test; do
+        ./prep.py --seed "${SEED}" "${SPLIT}.tsv" "${SPLIT}.fasttext" &
+    done
+    wait
+}
+
+train() {
+    echo "Training..."
+    fasttext supervised \
+        -input train.fasttext -output model \
+        -minCount 2 -wordNgrams 2 \
+        -dim "${DIM}" -lr "${LR}" -epoch "${EPOCHS}" \
+        -seed "${SEED}"
+}
+
+train_with_pretrained() {
+    echo "Training with pretrained vectors..."
+    # Dimensionality has to match the pretrained ones.
+    fasttext supervised \
+        -input train.fasttext -output model \
+        -pretrainedVectors "${VECTORS}" \
+        -dim 300 -epoch 0 \
+        -seed "${SEED}"
+}
+
+evaluate() {
+    echo "Evaluating..."
+    fasttext predict model.bin test > "${PREDICTIONS}"
+}
+
+main() {
+    #download_pretrained
+    prep
+    train
+    #train_with_pretrained
+    evaluate
+}
+
+main
