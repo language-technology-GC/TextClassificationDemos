@@ -37,7 +37,7 @@ train() {
 }
 
 evaluate() {
-    echo "Predicting and evaluating..."
+    echo "Evaluating..."
     vw -t -d test.vw -i "${MODEL}" -p test.pred \
        --loss_function logistic --binary \
        --quiet
