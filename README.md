@@ -1,7 +1,7 @@
 # Simple text classification demo
 
-The following contains a sample of a text classification demo using the IMDB
-movie review data and the Vowpal Wabbit tool.
+The following contains a text classification demo using the IMDB movie review
+data and the Vowpal Wabbit tool.
 
 See [`run`](run) for more details.
 
