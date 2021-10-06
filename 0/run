@@ -12,7 +12,7 @@ set -eou pipefail
 
 readonly SEED=11215
 
-readonly MODEL=model.mod
+readonly MODEL=model.bin
 readonly PREDICTIONS=test.pred
 
 prep() {

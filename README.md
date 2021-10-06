@@ -1,1 +1,1 @@
-Text classification demos.
+Simple text classification demos.

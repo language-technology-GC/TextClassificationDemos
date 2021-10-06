@@ -1,7 +1,7 @@
 #!/bin/bash
 # Text classification example with fastText.
 # 
-# To install FfastText, run:
+# To install fastText, run:
 #     conda install -c conda-forge fasttext
 # 
 # The data was obtained via NeMo:
@@ -50,13 +50,14 @@ train_with_pretrained() {
     fasttext supervised \
         -input train.fasttext -output model \
         -pretrainedVectors "${VECTORS}" \
-        -dim 300 -epoch 0 \
+        -dim 300 -epoch 1 \
         -seed "${SEED}"
 }
 
 evaluate() {
     echo "Evaluating..."
-    fasttext predict model.bin test > "${PREDICTIONS}"
+    fasttext predict model.bin test.fasttext > "${PREDICTIONS}"
+    ./evaluate.py test.fasttext "${PREDICTIONS}"
 }
 
 main() {
