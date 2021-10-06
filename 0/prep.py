@@ -8,7 +8,7 @@ import re
 from typing import List, Tuple
 
 import detectormorse  # type: ignore
-import nltk           # type: ignore
+import nltk  # type: ignore
 
 
 def main(args: argparse.Namespace) -> None:
