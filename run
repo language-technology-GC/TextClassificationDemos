@@ -24,7 +24,6 @@ prep() {
     wait
 }
 
-
 train() {
     echo "Training..."
     vw -d train.vw -f "${MODEL}" \
@@ -44,12 +43,10 @@ evaluate() {
     ./evaluate.py test.vw test.pred
 }
 
-
 main() {
     prep
     train
     evaluate
 }
-
 
 main
