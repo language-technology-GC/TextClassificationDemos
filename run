@@ -1,0 +1,55 @@
+#!/bin/bash
+# Text classification example with Vowpal Wabbit.
+# 
+# To install Vowpal Wabbit, run:
+#     conda install -c conda-forge vowpalwabbit
+# 
+# The data was obtained via NeMo:
+#
+# https://github.com/NVIDIA/NeMo/blob/main/examples/nlp/text_classification/data/import_datasets.py
+
+set -eou pipefail
+
+readonly SEED=11215
+
+readonly MODEL=model
+readonly PREDICTIONS=test.pred
+
+prep() {
+    echo "Prepping data..."
+    # Runs the preparation steps in parallel for train and test.
+    for SPLIT in train test; do
+        ./prep.py --seed "${SEED}" "${SPLIT}.tsv" "${SPLIT}.vw" &
+    done
+    wait
+}
+
+
+train() {
+    echo "Training..."
+    vw -d train.vw -f "${MODEL}" \
+       --loss_function logistic \
+       --ngram 2 \
+       --l1 1e-6 --l2 1e-6 -c --passes 5 \
+       --quiet
+    # Removes the cache file.
+    rm -f train.vw.cache
+}
+
+evaluate() {
+    echo "Predicting and evaluating..."
+    vw -t -d test.vw -i "${MODEL}" -p test.pred \
+       --loss_function logistic --binary \
+       --quiet
+    ./evaluate.py test.vw test.pred
+}
+
+
+main() {
+    prep
+    train
+    evaluate
+}
+
+
+main
