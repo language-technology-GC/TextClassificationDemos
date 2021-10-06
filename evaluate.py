@@ -21,5 +21,5 @@ def main(args: argparse.Namespace) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("gold", help="path to gold VW file")
-    parser.add_argument("hypo", help="path to hypotheses file")
+    parser.add_argument("hypo", help="path to hypothesis file")
     main(parser.parse_args())
